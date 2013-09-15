@@ -1,0 +1,168 @@
+/* ================== functions ========================== */
+/*
+This code was written as functions each function can be used seperately
+These functions all use the ID number to return various values derived
+from the given ID number
+
+funcConvertNumber - takes in a single number(decimal) and returns it as a 
+                    character field with zero's stripped
+*/
+
+FUNCTION fnLuhnAlgorithm RETURNS LOGICAL
+  (INPUT piNumber AS INT64):
+/*------------------------------------------------------------------------------
+  Purpose:  Applies Luhn Algorithm to check a Number 
+    Notes:  Returns True/False Validation based on check digit
+
+    From the rightmost digit, which is the check digit, moving left, double the value
+    of every second digit; 
+    if product of this doubling operation is greater than 9 (e.g., 7 * 2 = 14).
+        Sum the digits of the products (e.g., 10: 1 + 0 = 1, 14: 1 + 4 = 5) together 
+    Compute the sum of the digits.
+    Multiply by 9.
+    The last digit, is the check digit.
+------------------------------------------------------------------------------*/
+    DEFINE VARIABLE iDigit      AS INTEGER   NO-UNDO INITIAL 0.
+    DEFINE VARIABLE iSum        AS INTEGER   NO-UNDO INITIAL 0.
+    DEFINE VARIABLE iLoopCnt    AS INTEGER   NO-UNDO INITIAL 0.
+    DEFINE VARIABLE i64Number   AS INT64     NO-UNDO.
+
+    /* skip the check digit */
+    DO iLoopCnt = LENGTH(piNumber) - 1 TO 1 BY -1:
+
+      iDigit = INTEGER(SUBSTRING(piNumber,iLoopCnt,1)).
+
+      IF iLoopCnt MODULO 2 = LENGTH(piNumber) MODULO 2 THEN
+          iSum = iSum + iDigit.
+      ELSE
+          iSum = iSum + INTEGER(SUBSTRING(STRING(iDigit * 2,"99"),1,1)) 
+                      + INTEGER(SUBSTRING(STRING(iDigit * 2,"99"),2,1)).   
+    END.
+
+    IF ((iSum * 9) MODULO 10) = INTEGER(SUBSTRING(piNumber,LENGTH(pcNumber),1)) THEN
+      RETURN TRUE.
+    ELSE
+      RETURN FALSE.
+
+END FUNCTION. /* fnLuhnAlgorithm  */
+
+
+FUNCTION fnCheckIDValid RETURNS LOGICAL
+  (INPUT pcIDNumber AS CHARACTER):
+/*------------------------------------------------------------------------------
+  Purpose:  Takes RSA ID Number and Returns Whether Valid RSA ID 
+    Notes:  WORKS for RSA ID Numbers -  
+            Returns Validation based on Length and last Character
+------------------------------------------------------------------------------*/
+  DEFINE VARIABLE cNum        AS CHARACTER NO-UNDO.
+  DEFINE VARIABLE dTestDate   AS DATE      NO-UNDO.
+  DEFINE VARIABLE iDay        AS INTEGER   NO-UNDO.
+  DEFINE VARIABLE iLoopCnt    AS INTEGER   NO-UNDO.
+  DEFINE VARIABLE iMonth      AS INTEGER   NO-UNDO.
+  DEFINE VARIABLE iNum        AS INTEGER   NO-UNDO.
+  DEFINE VARIABLE iNum1       AS INTEGER   NO-UNDO.
+  DEFINE VARIABLE iNum2       AS INTEGER   NO-UNDO.
+  DEFINE VARIABLE iYear       AS INTEGER   NO-UNDO.
+
+  /* 
+     first do some basic tests.
+     RSA ID Number must be 13 Characters
+     12th position is 8 or 9 
+     11th position is 0 for SA Citisen and 1 otherwise
+     first 6 positions must be a valid date
+  */
+  IF LENGTH(pcIDNumber) <> 13 THEN
+      RETURN FALSE.
+
+  ASSIGN
+      iDay      = INTEGER(SUBSTR(pcIDNumber,5,2))
+      iMonth    = INTEGER(SUBSTR(pcIDNumber,3,2))
+      iYear     = INTEGER("19"+ SUBSTR(pcIDNumber,1,2))
+      dTestDate = DATE(iMonth,iDay,iYear)
+      NO-ERROR.
+
+  IF ERROR-STATUS:ERROR OR dTestDate = ? THEN
+      RETURN FALSE.
+
+  IF INTEGER(SUBSTR(pcIDNumber,12,1)) < 8 THEN
+      RETURN FALSE.
+
+  IF INTEGER(SUBSTR(pcIDNumber,11,1)) > 1 THEN
+      RETURN FALSE.
+
+  RETURN fnLuhnAlgorithm(pcIDNumber).
+
+END FUNCTION. /* fnCheckIDValid  */
+
+
+
+
+FUNCTION fnConvertIDtoBirthDate RETURNS DATE
+  (INPUT pcIDNumber AS CHARACTER):
+/*------------------------------------------------------------------------------
+  Purpose:  Takes ID Number and Return Birth Date 
+    Notes:  WORKS for RSA ID Numbers
+            First 6 numbers of ID is birthdate
+            YYMMDD
+------------------------------------------------------------------------------*/
+  DEFINE VARIABLE iDay   as INTEGER.
+  DEFINE VARIABLE iMonth as INTEGER.
+  DEFINE VARIABLE iYear  as INTEGER.
+
+  iYear  = INTEGER(SUBSTR(pcIDNumber,1,2)).
+  iMonth = INTEGER(SUBSTR(pcIDNumber,3,2)).
+  iDay   = INTEGER(SUBSTR(pcIDNumber,5,2)).
+
+  IF (iYear < 15) /*WORKS FOR YEARS WITHIN 15 of 2000*/
+  THEN
+    iYear = iYear + 2000.
+  ELSE
+    iYear = iYear + 1900.
+
+  RETURN DATE(iMonth,iDay,iYear).
+
+END FUNCTION.
+
+FUNCTION fnConvertIDtoCountry RETURNS DECIMAL
+  (INPUT countryobj AS DECIMAL, INPUT pcIDNumber AS CHARACTER):
+/*------------------------------------------------------------------------------
+  Purpose:  Takes ID Number and Return Country Obj 
+    Notes:  WORKS for RSA ID Numbers - if Country_obj <> 0 then we 
+            return the country_obj given, else we use the 3rd last character of
+            ID Number to return either SA country_obj or OT country_obj
+            0 = SA Citizen
+            1 = NON SA Citizen
+------------------------------------------------------------------------------*/
+  IF countryobj > 1 THEN
+    RETURN countryobj.
+
+  IF (INTEGER(SUBSTR(pcIDNumber,11,1))=0)
+    THEN DO:
+      FIND gsm_country WHERE gsm_country.country_code = 'SA' NO-ERROR.
+      RETURN gsm_country.country_obj.
+    END.
+  ELSE DO:
+      FIND gsm_country WHERE gsm_country.country_code = 'ot' NO-ERROR.
+      RETURN gsm_country.country_obj.
+    END.
+
+END FUNCTION.
+
+
+FUNCTION fnConvertIDtoGender RETURNS CHARACTER
+  (INPUT pcIDNumber AS CHARACTER):
+/*------------------------------------------------------------------------------
+  Purpose:  Takes ID Number and Return Gender 
+    Notes:  WORKS for RSA ID Numbers -  
+            Returns gender based on the 7th character of RSA ID number
+            0 - 4 = FEM (Female / Vroulik)
+            5 - 9 = MAL (Male /Manlik)
+------------------------------------------------------------------------------*/
+
+  IF (INTEGER(SUBSTR(pcIDNumber,7,1))<5) THEN
+      RETURN STRING("FEM").
+  ELSE
+      RETURN STRING("MAL").
+
+END FUNCTION. /* fnConvertIDtoGender */
+

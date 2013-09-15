@@ -1,0 +1,21 @@
+<script type="text/javascript">
+	var authurl = '{$authurl}';
+{literal}
+	function setCookie(c_name,value,exdays){
+		var exdate=new Date();
+		exdate.setDate(exdate.getDate() + exdays);
+		var c_value=escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCString());
+		document.cookie=c_name + "=" + c_value;
+	}
+	
+//	jQuery(document).ready(function(){
+		var h = location.hash.substr(1);	
+		h = h.split('&')[0].split('=')[1];
+		if (h.lenght != 0) {	
+			setCookie('gtoken',h,360);
+			location.href = authurl;
+		}
+//	});
+{/literal}
+</script>
+{$authurl}

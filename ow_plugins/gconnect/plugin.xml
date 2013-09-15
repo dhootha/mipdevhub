@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<plugin>
+	<name>Google Connect</name>
+	<key>gconnect</key>
+	<description>Allow users to join, sign in, using their Google accounts</description>
+    <author>Owen Baines </author>
+    <authorEmail>owenbaines99@googlemail.com</authorEmail>
+	<authorUrl>http://socialfire.cu.cc/</authorUrl>
+	<developerKey>b3d576487220125f791c9586bd98e454</developerKey>
+    <build>4416</build>
+    <copyright>(C) 2011 OwenBaines All rights reserved.</copyright>
+    <license>The GPL License</license>
+    <licenseUrl>http://www.gnu.org/copyleft/gpl.html</licenseUrl>
+</plugin>

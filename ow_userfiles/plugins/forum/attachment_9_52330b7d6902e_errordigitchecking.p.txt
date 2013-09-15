@@ -1,0 +1,98 @@
+FUNCTION fnLuhnAlgorithm RETURNS LOGICAL
+  (INPUT piNumber AS INT64):
+/*------------------------------------------------------------------------------
+  Purpose:  Applies Luhn Algorithm to check a Number 
+    Notes:  Returns True/False Validation based on check digit
+
+    From the rightmost digit, which is the check digit, moving left, double the value
+    of every second digit; 
+    if product of this doubling operation is greater than 9 (e.g., 7 * 2 = 14).
+        Sum the digits of the products (e.g., 10: 1 + 0 = 1, 14: 1 + 4 = 5) together 
+    Compute the sum of the digits.
+    Multiply by 9.
+    The last digit, is the check digit.
+------------------------------------------------------------------------------*/
+    DEFINE VARIABLE iDigit      AS INTEGER   NO-UNDO INITIAL 0.
+    DEFINE VARIABLE iSum        AS INTEGER   NO-UNDO INITIAL 0.
+    DEFINE VARIABLE iLoopCnt    AS INTEGER   NO-UNDO INITIAL 0.
+    DEFINE VARIABLE i64Number   AS INT64     NO-UNDO.
+
+    /* skip the check digit */
+    DO iLoopCnt = LENGTH(piNumber) - 1 TO 1 BY -1:
+
+      iDigit = INTEGER(SUBSTRING(piNumber,iLoopCnt,1)).
+
+      IF iLoopCnt MODULO 2 = LENGTH(piNumber) MODULO 2 THEN
+          iSum = iSum + iDigit.
+      ELSE
+          iSum = iSum + INTEGER(SUBSTRING(STRING(iDigit * 2,"99"),1,1)) 
+                      + INTEGER(SUBSTRING(STRING(iDigit * 2,"99"),2,1)).   
+    END.
+
+    IF ((iSum * 9) MODULO 10) = INTEGER(SUBSTRING(piNumber,LENGTH(pcNumber),1)) THEN
+      RETURN TRUE.
+    ELSE
+      RETURN FALSE.
+
+END FUNCTION. /* fnLuhnAlgorithm  */
+
+
+
+FUNCTION fnDammAlgorithm RETURNS CHARACTER
+  (INPUT pcNumber AS CHARACTER, INPUT pcCheck_or_Return AS CHARACTER):
+/*------------------------------------------------------------------------------
+  Purpose:  Damm Algorithm
+    Notes:  Returns number if correct, returns number with check digit if pcCheck_or_Return = R
+            pcNumber is any number (integer)
+            if pcCheck_or_Return = C then pcNumber includes check digit and we will verify if check digit
+            if pcCheck_or_Return = R then pcNumber does not include check digit and we will calculate check digit
+            Number is always returned with check digit in character form.
+            
+            The last digit, is the check digit. Becuase we use base 1 as index and not base 0
+            we work with 1 to 10 and not 0 to 9
+            
+            input number as character becuase we want to keep leading zero's
+------------------------------------------------------------------------------*/
+    DEFINE VARIABLE iDigit        AS INTEGER    NO-UNDO.
+    DEFINE VARIABLE iLength       AS INTEGER    NO-UNDO.
+    DEFINE VARIABLE iLoopCnt      AS INTEGER    NO-UNDO.
+    DEFINE VARIABLE iRow          AS INTEGER    NO-UNDO INITIAL 1.
+    DEFINE VARIABLE iCheckDigit   AS INTEGER    NO-UNDO.
+    DEFINE VARIABLE i64Number     AS INT64      NO-UNDO.
+    DEFINE VARIABLE cAntiSymmList AS CHARACTER  NO-UNDO.
+
+    /* DAMM LIST FOR CDV */
+    ASSIGN cAntiSymmList = 
+    "0317598642,7092154863,4206871359,1750983426,6123045978,3674209581,5869720134,8945362017,9438617205,2581436790".
+
+    IF pcCheck_or_Return <> "R" AND pcCheck_or_Return <> "C" THEN RETURN ERROR "Invalid Parameter Value".
+
+    ASSIGN i64Number = int64 (PCNUMBER) NO-ERROR.
+    IF ERROR-STATUS:ERROR THEN RETURN ERROR "Number to be evaluated not integer/numeric".
+
+    ASSIGN iLength = LENGTH(pcNumber). 
+    
+    IF pcCheck_or_Return = "C" THEN
+    DO:
+        ASSIGN
+            iCheckDigit = INTEGER(SUBSTRING(pcNumber,iLength,1))
+            iLength     = iLength - 1. /* do not check the check digit */
+    END.
+        
+
+    DO iLoopCnt = 1 TO iLength:
+
+      ASSIGN
+          iDigit = INTEGER(SUBSTRING(pcNumber,iLoopCnt,1)) /* find the next digit in number */
+          iRow = INTEGER(SUBSTRING(ENTRY(iRow,cAntisymmList),(iDigit + 1),1)). /* set the next row we need to use, use iDigit+1 so we get 1 to 10 and not 0 to 9*/
+    END.
+
+    IF pcCheck_or_Return = "C" THEN
+        IF iCheckDigit = iRow THEN
+            RETURN pcNumber.
+        ELSE 
+            RETURN ERROR "Invalid Check Digit".
+    ELSE
+        RETURN STRING(pcNumber + iRow).
+
+END FUNCTION. /* fnDammAlgorithm  */

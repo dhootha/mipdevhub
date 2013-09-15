@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<theme>
+    <name>ShowCase</name>
+    <key>showcase</key>
+    <version>1.0</version>
+    <compatibility>1.5 and higher</compatibility>
+    <description>The Show Case theme</description>
+    <author>Oxwall Foundation</author>
+    <authorEmail>themes@oxwall.org</authorEmail>
+    <authorUrl>http://www.oxwall.org/foundation</authorUrl>
+    <copyright>(C) 2012 Oxwall Foundation. All rights reserved.</copyright>
+    <license>The BSD License</license>
+    <licenseUrl>http://www.opensource.org/licenses/bsd-license.php</licenseUrl>
+</theme>

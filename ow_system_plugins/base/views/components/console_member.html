@@ -1,0 +1,420 @@
+{style}
+{literal}
+
+/*
+* CSS Styles that are needed by jScrollPane for it to operate correctly.
+*
+* Include this stylesheet in your site or copy and paste the styles below into your stylesheet - jScrollPane
+* may not operate correctly without them.
+*/
+
+.jspContainer
+{
+    overflow: hidden;
+    position: relative;
+}
+
+.jspPane
+{
+    position: absolute;
+}
+
+.jspVerticalBar
+{
+    position: absolute;
+    top: 0;
+    right: 1px;
+    width: 4px;
+    height: 100%;
+}
+
+.jspHorizontalBar
+{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+}
+
+.jspVerticalBar *,
+.jspHorizontalBar *
+{
+    margin: 0;
+    padding: 0;
+}
+
+.jspCap
+{
+    display: none;
+}
+
+.jspHorizontalBar .jspCap
+{
+    float: left;
+}
+
+.jspTrack
+{
+    position: relative;
+    display: none;
+}
+
+.jspDrag
+{
+    background: none repeat scroll 0 0 #999999;
+    border-radius: 2px 2px 2px 2px;
+    right: 0px;
+    width: 4px;
+    position: relative;
+    top: 0;
+    cursor: pointer;
+}
+
+.jspHorizontalBar .jspTrack,
+.jspHorizontalBar .jspDrag
+{
+    float: left;
+    height: 100%;
+}
+
+.jspArrow
+{
+    background: #50506d;
+    text-indent: -20000px;
+    display: block;
+    cursor: pointer;
+}
+
+.jspArrow.jspDisabled
+{
+    cursor: default;
+    background: #80808d;
+}
+
+.jspVerticalBar .jspArrow
+{
+    height: 16px;
+}
+
+.jspHorizontalBar .jspArrow
+{
+    width: 16px;
+    float: left;
+    height: 100%;
+}
+
+.jspVerticalBar .jspArrow:focus
+{
+    outline: none;
+}
+
+.jspCorner
+{
+    background: #eeeef4;
+    float: left;
+    height: 100%;
+}
+
+/* Yuk! CSS Hack for IE6 3 pixel bug :( */
+* html .jspCorner
+{
+    margin: 0 -3px 0 0;
+}
+
+
+.ow_scrollable
+{
+    width: 227px;
+    height: 200px;
+    overflow: auto;
+}
+
+.ow_scrollable .ow_console_ntf
+{
+    height: auto;
+}
+
+.ow_scrollable:hover .jspTrack
+{
+    display: block;
+}
+
+.console_hover_dd:hover .console_tooltip
+{
+    display: block;
+}
+
+.console_tooltip
+{
+    display: none;
+}
+
+
+{/literal}
+{/style}
+
+
+<div class="ow_console clearfix">
+    <div class="ow_console_body clearfix">
+        <div class="ow_console_block">
+
+
+			<div class="ow_console_item">
+                <a href="http://oxwalldev/mailbox">Mail</a>
+                <span class="ow_count_wrap ow_count_active">
+                    <span class="ow_count">9</span>
+                </span>
+            </div>
+
+            <div class="console_click_dd ow_console_item">
+                <a href="#">Invitations</a>
+                <div class="console_tooltip ow_tooltip ow_tooltip_top_right">
+                    <div class="ow_tooltip_tail">
+                        <span></span>
+                    </div>
+                    <div class="ow_tooltip_body">
+                        <div class="ow_scrollable">
+                                <ul class="ow_console_list ow_console_list_no_cursor">
+                                    <li class="ow_console_new_message">
+										<div class="clearfix">
+											<a href="http://oxwalldev/user/zaph" class="ow_console_user_pic"><img alt="" src="console_files/images/avatar_kaos.jpg"></a>
+											<div class="ow_console_invt_txt" href="#">KaoS commented on your photo</div>
+										</div>
+                                    </li>
+                                    <li>
+										<div class="clearfix">
+											<a href="http://oxwalldev/user/zaph" class="ow_console_user_pic"><img alt="" src="console_files/images/avatar_kaos.jpg"></a>
+											<div class="ow_console_invt_txt" href="#">KaoS commented on your photo <a href="#">Accept</a> <a href="#">Decline</a></div>
+										</div>
+                                    </li>
+                                    <li>
+										<div class="clearfix">
+											<a href="http://oxwalldev/user/zaph" class="ow_console_user_pic"><img alt="" src="console_files/images/avatar_kaos.jpg"></a>
+											<div class="ow_console_invt_txt" href="#">KaoS commented on your photo <a href="#">Accept</a> <a href="#">Decline</a></div>
+										</div>
+                                    </li>
+                                    <li>
+										<div class="clearfix">
+											<a href="http://oxwalldev/user/zaph" class="ow_console_user_pic"><img alt="" src="console_files/images/avatar_kaos.jpg"></a>
+											<div class="ow_console_invt_txt" href="#">KaoS commented on your photo <a href="#">Accept</a> <a href="#">Decline</a></div>
+										</div>
+                                    </li>
+                                    <li>
+										<div class="clearfix">
+											<a href="http://oxwalldev/user/zaph" class="ow_console_user_pic"><img alt="" src="console_files/images/avatar_kaos.jpg"></a>
+											<div class="ow_console_invt_txt" href="#">KaoS commented on your photo <a href="#">Accept</a> <a href="#">Decline</a></div>
+										</div>
+                                    </li>
+                                    <li>
+										<div class="clearfix">
+											<a href="http://oxwalldev/user/zaph" class="ow_console_user_pic"><img alt="" src="console_files/images/avatar_kaos.jpg"></a>
+											<div class="ow_console_invt_txt" href="#">KaoS commented on your photo <a href="#">Accept</a> <a href="#">Decline</a></div>
+										</div>
+                                    </li>
+                                </ul>
+
+                                {*<div class="ow_scroll"><div></div></div>*}
+                        </div>
+						<div class="ow_console_view_all_btn_wrap"><a href="#" class="ow_console_view_all_btn">View All Notifications</a></div>
+                    </div>
+                </div>
+            </div><div class="console_click_dd ow_console_item">
+                <a href="#">Notifications</a>
+                <div class="console_tooltip ow_tooltip ow_tooltip_top_right">
+                    <div class="ow_tooltip_tail">
+                        <span></span>
+                    </div>
+                    <div class="ow_tooltip_body">
+                        <div class="ow_scrollable">
+                                <ul class="ow_console_list">
+                                    <li>
+										<div class="clearfix">
+											<a href="http://oxwalldev/user/zaph" class="ow_console_user_pic"><img alt="" src="console_files/images/avatar_kaos.jpg"></a>
+											<a class="ow_console_ntf_txt" href="#">KaoS commented on your photo</a>
+										</div>
+                                    </li>
+                                    <li>
+										<div class="clearfix">
+											<a href="http://oxwalldev/user/zaph" class="ow_console_user_pic"><img alt="" src="console_files/images/avatar_kaos.jpg"></a>
+											<a class="ow_console_ntf_txt" href="#">KaoS commented on your photo</a>
+										</div>
+                                    </li>
+                                    <li>
+										<div class="clearfix">
+											<a href="http://oxwalldev/user/zaph" class="ow_console_user_pic"><img alt="" src="console_files/images/avatar_kaos.jpg"></a>
+											<a class="ow_console_ntf_txt" href="#">KaoS commented on your photo</a>
+										</div>
+                                    </li>
+                                    <li>
+										<div class="clearfix">
+											<a href="http://oxwalldev/user/zaph" class="ow_console_user_pic"><img alt="" src="console_files/images/avatar_kaos.jpg"></a>
+											<a class="ow_console_ntf_txt" href="#">KaoS commented on your photo</a>
+										</div>
+                                    </li>
+                                    <li>
+										<div class="clearfix">
+											<a href="http://oxwalldev/user/zaph" class="ow_console_user_pic"><img alt="" src="console_files/images/avatar_kaos.jpg"></a>
+											<a class="ow_console_ntf_txt" href="#">KaoS commented on your photo</a>
+										</div>
+                                    </li>
+                                    <li>
+										<div class="clearfix">
+											<a href="http://oxwalldev/user/zaph" class="ow_console_user_pic"><img alt="" src="console_files/images/avatar_kaos.jpg"></a>
+											<a class="ow_console_ntf_txt" href="#">KaoS commented on your photo</a>
+										</div>
+                                    </li>
+                                    <li>
+										<div class="clearfix">
+											<a href="http://oxwalldev/user/zaph" class="ow_console_user_pic"><img alt="" src="console_files/images/avatar_kaos.jpg"></a>
+											<a class="ow_console_ntf_txt" href="#">KaoS commented on your photo</a>
+										</div>
+                                    </li>
+                                    <li>
+										<div class="clearfix">
+											<a href="http://oxwalldev/user/zaph" class="ow_console_user_pic"><img alt="" src="console_files/images/avatar_kaos.jpg"></a>
+											<a class="ow_console_ntf_txt" href="#">KaoS commented on your photo</a>
+										</div>
+                                    </li>
+                                    <li>
+										<div class="clearfix">
+											<a href="http://oxwalldev/user/zaph" class="ow_console_user_pic"><img alt="" src="console_files/images/avatar_kaos.jpg"></a>
+											<a class="ow_console_ntf_txt" href="#">KaoS commented on your photo</a>
+										</div>
+                                    </li>
+                                    <li>
+										<div class="clearfix">
+											<a href="http://oxwalldev/user/zaph" class="ow_console_user_pic"><img alt="" src="console_files/images/avatar_kaos.jpg"></a>
+											<a class="ow_console_ntf_txt" href="#">KaoS commented on your photo</a>
+										</div>
+                                    </li>
+                                </ul>
+
+                                {*<div class="ow_scroll"><div></div></div>*}
+
+                        </div>
+						<div class="ow_console_view_all_btn_wrap"><a href="#" class="ow_console_view_all_btn">View All Notifications</a></div>
+                    </div>
+                </div>
+            </div><div class="console_hover_dd ow_console_item">
+                <a href="http://oxwalldev/my-profile">Kaos</a>
+                <span class="ow_console_more"></span>
+                <div class="console_tooltip ow_tooltip ow_tooltip_top_right">
+                    <div class="ow_tooltip_tail">
+                        <span></span>
+                    </div>
+                    <div class="ow_tooltip_body">
+                        <ul class="ow_console_dropdown">
+                            <li><div class="ow_console_dropdown_cont"><a href="#">Dashboard</a></div></li>
+                            <li><div class="ow_console_dropdown_cont"><a href="#">My Profile</a></div></li>
+                            <li><div class="ow_console_dropdown_cont"><a href="#">Edit Profile</a></div></li>
+                            <li><div class="ow_console_dropdown_cont"><a href="#">My Preferences</a></div></li>
+                            <li><div class="ow_console_dropdown_cont"><a href="#">Privacy</a></div></li>
+							<li><div class="ow_console_divider"></div></li>
+                            <li><div class="ow_console_dropdown_cont"><a href="#">Sign Out</a></div></li>
+                        </ul>
+                    </div>
+                </div>
+            </div><div class="console_hover_dd ow_console_item">
+                <a href="#">Admin</a>
+                <span class="ow_console_more"></span>
+                <div class="console_tooltip ow_tooltip ow_tooltip_top_right">
+                    <div class="ow_tooltip_tail">
+                        <span></span>
+                    </div>
+                    <div class="ow_tooltip_body">
+                        <ul class="ow_console_dropdown">
+                            <li><div class="ow_console_dropdown_cont"><a href="#">Admin Dashboard</a></div></li>
+							<li><div class="ow_console_divider"></div></li>
+                            <li><div class="ow_console_dropdown_cont"><a href="#">Edit Theme</a></div></li>
+                            <li><div class="ow_console_dropdown_cont"><a href="#">Manage Users</a></div></li>
+                            <li><div class="ow_console_dropdown_cont"><a href="#">Manage Pages</a></div></li>
+                            <li><div class="ow_console_dropdown_cont"><a href="#">Manage Plugins</a></div></li>
+                        </ul>
+                    </div>
+                </div>
+            </div><div class="ow_console_item">Sign In</div><div class="ow_console_item">Sign Up</div><div class="console_hover_dd ow_console_item">
+                <div class="ow_console_lang_item">
+                    <span class="ow_console_lang_en">en</span>
+                </div>
+                <div class="console_tooltip ow_tooltip ow_tooltip_top_right">
+                    <div class="ow_tooltip_tail"><span></span></div>
+                    <div class="ow_tooltip_body">
+                        <ul class="ow_console_lang">
+                            <li class="ow_console_lang_item"><span class="ow_console_lang_en">en</span></li>
+                            <li class="ow_console_lang_item"><span class="ow_console_lang_de">de</span></li>
+                            <li class="ow_console_lang_item"><span class="ow_console_lang_ru">ru</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+
+
+
+{*
+
+{style}
+{literal}
+.ow_console a.ow_console_my_profile{
+    text-align:center;
+    padding-top:6px;
+    padding-left: 20px;
+    height:25px;
+    width:auto;
+    background-position: left center;
+}
+{/literal}
+{/style}
+
+<div class="ow_console clearfix">
+    <div class="ow_console_body clearfix">
+        <div style="float:right;">
+            {foreach from=$items item='item'}
+            {if !empty($item.block)}
+                <div class="console_item notification_shortcut{if !empty($item.block_class)} {$item.block_class}{/if}"{if !empty($item.block_id)} id="{$item.block_id}"{/if}>
+                    <div class="fake_node">
+                        <a class="{if !empty($item.icon_class)}{$item.icon_class}{else}ow_ic_file{/if}" href="{$item.url}"{if !empty($item.id)} id="{$item.id}"{/if}{if !empty($item.title)} title="{$item.title}"{/if}>
+                        {if !empty($item.block_items_count)}<span class="ow_txt_value">{$item.block_items_count}</span>{else}&nbsp;{/if}
+                        </a>
+                    </div>
+                </div>
+            {/if}
+            {/foreach}
+            <div class="console_item common_shortcuts">
+                <div class="fake_node">
+                {foreach from=$items item='item'}
+                {if empty($item.block)}
+                <a href="{$item.url}"{if !empty($item.title)} title="{$item.title}"{/if}{if !empty($item.icon_class)} class="{$item.icon_class}"{/if}{if !empty($item.id)} id="{$item.id}}"{/if}>&nbsp</a>
+                {/if}
+                {/foreach}
+                </div>
+            </div>
+            <div class="console_item common_shortcuts">
+                <div class="fake_node">
+                    <a class="ow_console_my_profile ow_ic_user" href="{$links.profile}" title="{$titles.profile}">{$displayName}</a>
+                </div>
+            </div>
+        	<div class="console_item common_shortcuts">
+                <div class="fake_node">
+                    <a style="text-align:center;padding-top:6px;height:25px;width:auto;" onclick="OW.trigger('base.sign_out_click', [ '{$displayName}' ] );" href="{$links.sign_out}">{$titles.sign_out}</a>
+                </div>
+            </div>
+            {if $switchLanguage}
+            <div class="console_item common_shortcuts">
+                <div class="fake_node">
+                {$switchLanguage}
+                </div>
+            </div>
+            {/if}
+        </div>
+    </div>
+</div>
+
+*}
+

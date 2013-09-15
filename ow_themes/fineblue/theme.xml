@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<theme>
+    <name>Fineblue</name>
+	<key>fineblue</key>
+    <description>Based on the original 'Graphite' theme with sidebar</description>
+    <author>Rajoo</author>
+    <authorEmail>rpatel12@hotmail.com</authorEmail>
+	<authorUrl>http://www.aayakabu.com</authorUrl>
+    <copyright>(C) 2011 Rajoo. All rights reserved.</copyright>
+	<license>The BSD License</license>
+    <licenseUrl>http://www.opensource.org/licenses/bsd-license.php</licenseUrl>
+    <sidebarPosition>right</sidebarPosition>
+</theme>

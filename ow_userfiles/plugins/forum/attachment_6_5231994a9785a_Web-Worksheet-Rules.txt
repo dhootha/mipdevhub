@@ -1,0 +1,160 @@
+As at date: 25 July 2013       
+  Summary of programs (specific to SCA);
+
+WOBS
+	* Benefit Selection Wob  : ws/wob/wsschbenwob.w
+	* Category Selection Wob : ws/wob/wsschctswob.w
+	* Scheme Worksheets Wob  : ws/wob/wsschwsmwob.w
+	* Group Scheme Rates Wob : ws/wob/wsschratwob.w
+	* II Sliding Scale Category Links Wob : ws/wob/wsschiiswob.w
+	* Scheme Amend Config : ws/wob/wscfgschwob.w
+
+PLIPS
+	* Main Scheme Capture And Amend plip : cb/app/cbschcapplipp.p
+	* Add and Terminate Components functionality : cb/app/cbgroupschplipp.p
+	* Scheme Amend Config plip : cb/app/cbschcfgplipp.p
+
+CLASSES
+	* worksheet class : cb/cls/basworksheet.cls
+
+
+Note: Please see 'Scheme Capture and Amend(draft).png' for a picture view of how the wobs and plip hang together.
+
+Scheme Template Worksheet Rules;
+
+Below are the rules that are available to be used in setting up the Scheme Capture and Amend functionality. 
+You can use these rules to dictate how worksheets look and respond to a user, validations and more.
+The more you know the more powerful your solution becomes. Please do read these rules as it will only help you.
+
+   - BIG NOTE regarding setup: As far as possible, column data types must be character... for 2 reasons:
+      1 ) To be able to set up rules on a column, you need to enter character input... 
+      2)  Coretech still need to fix the 'saving a worksheet with incompatible data types' problem.
+      3)  Remember to create the Scheme Amend preferences via the Scheme Amend CWAP
+
+   Visual Rule Syntax 
+
+    - ScreenRulesRow : 
+
+    - Orientation : Either 'Vertical' OR 'Horizontal'. This will dictate where the code gets the Control Rules From.
+         - Horizontal meaning that Columns are dynamic along the X-axis.
+            - The Control Rules come from the CURRENT control's column in the row as specified by the 'ScreenRulesRow'
+              parameter in the 'Current_Worksheet_Rules' column. (e.g. ScreenRulesRow=4)
+         - Vertical meaning that Columns are dynamic along the Y-axis.
+            - The Control Rules come from the 'Current_Worksheet_Rules' column in the same row as the 'current control'.
+            - Control rules per column are set by identifying the column as follows;
+              e.g. @Value 3:control=combo|values=,Yes,No  means that for this current row, Column 'Value 3' will be a combo drop down with 'blank,yes and no' values.
+              e.g. @Value 3:control=combo|values=,Yes,No@Value 4:control=combo|values=,Yes,No  means that for this row, both Value 3 and Value 4 columns will be combo drop downs.
+
+    - BoldColumns : comma separated list of column numbers OR column headings.
+         e.g. BoldColumns=1,2,Rate_Group will bold column number 1 and 2 as well as the 'Rate_Group' column.
+       - If you bold a column, it overrides all other rules for every cell in this column except 'hiding' rules.
+    - BoldRows : comma separated list of row numbers you want to bold.
+         e.g. BoldRows=1,2,3 will bold row number 1, 2 and 3
+       - If you bold a row, it overrides all other rules for every cell in this row except 'hiding' rules.
+    - LockedColumns : comma separated list of column numbers OR column headings.
+         e.g. LockedColumns=1,2,Rate_Group
+       - If you lock a column, it overrides all other rules for every cell in this column except 'hiding' rules.
+    - LockedRows : comma separated list of row numbers you want to lock.
+         e.g. LockedRows=1,2,3 will lock row 1, 2 and 3
+       - If you lock a row, it overrides all other rules for every cell in this row except 'hiding' rules.
+    - LockedContent : comma separated list of cell values that you want to lock.
+         e.g. 'N/A,' will lock all the cells with cell values of 'N/A' and blank cell values.
+    - LockedCells : comma separated list of worksheet cell co-ordinates that you want to lock. 
+         e.g. LockedCells=From Age+7,To Age+7 will lock the cell in 'From Age' column / row 7. It will also lock the cell in 'To Age' column / row 7.
+         e.g. LockedCells=From Age+Spouse will lock the cell with the matching column heading of 'From Age' and the rootColumn cell value of 'Spouse'
+         e.g. LockedCells=From Age+Spou* will lock all cells with the matching column heading of 'From Age' and the rootColumn cell value beginning with 'Spou'
+         e.g. LockedCells=From A*+Spouse will lock all cells with the matching column heading beginning with 'From A' and the rootColumn cell value of 'Spouse'
+         e.g. LockedCells=From*+Spo* will lock all cells with the matching column heading beginning with 'From' and the rootColumn cell value beginning with 'Spo'
+    - LockedRowRootValues : comma separated list of root column (or First column of the worksheet) values. Each row with matching root cell values will be locked.
+         e.g. LockedRowRootValues=Rate_Review,Comm_Freq will lock 2 rows where the root column cell values are either 'Rate_Review' or 'Comm_freq'.
+    - HiddenColumns : comma separated list of column numbers OR column headings you want to hide.
+         e.g. HiddenColumns=2,Rate_Group will hide column 2 and the column with the heading 'Rate_Group'
+         e.g. HiddenColumns=*RIN* will hide all columns with the matching wildcard i.e. any column with *RIN* in it
+    - HiddenRows : comma separated list of row numbers you want to hide.
+         e.g. HiddenRows=7,15 will hide row 7 and 15
+    - HiddenContent : comma separated list of cell values that you want to hide.
+         e.g. 'ABC,DEF' will hide all the cells with cell values of 'ABC' and 'DEF' cell values
+    - HiddenCells : comma separated list of worksheet cell co-ordinates that you want to hide. 
+         e.g. HiddenCells=From Age+8,To Age+9 will hide the cell in 'From Age' column / row 8. It will also lock the cell in 'To Age' column / row 9.
+         e.g. HiddenCells=From Age+Spouse will hide the cell with the matching column heading of 'From Age' and the rootColumn cell value of 'Spouse'
+         e.g. HiddenCells=From Age+Spou* will hide the cell with the matching column heading of 'From Age' and the rootColumn cell value beginning with 'Spou'
+         e.g. HiddenCells=From A*+Spouse will hide the cell with the matching column heading beginning with 'From A' and the rootColumn cell value of 'Spouse'
+         e.g. HiddenCells=From*+Spo* will hide all cells with the matching column heading beginning with 'From' and the rootColumn cell value beginning with 'Spo'
+    - HiddenRowRootValues : comma separated list of root column (or First column of the worksheet) values. Each row with matching root cell values will be hidden.
+         e.g. HiddenRowRootValues=Benefit_Basis will lock the row where the root column cell value is 'Benefit_Basis'.
+      NOTE: Regarding Locked and Hidden rows (based on root cell content)
+                - Hidden will override locked. i.e. If setup locks and hides the same row ... it will be hidden
+    - HideRowWhenCellinColumnEquals : Hide an entire row based on the contents of a cell in this row but in a specified column.  This parameter takes 2 values;
+         The format is HideRowWhenCellinColumnEquals=<Column Heading>+<Cell value>
+         e.g. HideRowWhenCellinColumnEquals=Category Description+  will hide this row if the cell value in the 'Category Description' is blank.
+    
+   Control Rule Syntax
+
+    Horizontal Worksheet Orientation  
+    - control : specify what type of control this should be displayed as on screen
+         e.g. control=combo will create a Combo drop down.
+    - values : comma separated list that specified the values to populate combo's and lists. You can also provide a description/value value-pair list, so the user will see a description and not the value. See second example.
+        e.g. values=,January,February,March will create 4 entries in the combo / list. One blank and 3 months.
+        e.g. value=,Stable+STBL,Incremental+INCR will create a 3 entries in a combo. Values that the user will see are 'a blank', 'Stable' and 'Incremental'.
+    - CellComparison : The Cell Comparison Check is used to compare the contents of the current cell to the contents of a second cell and perform a simple comparison that will return a TRUE or FALSE.
+                                  This parameter must be set to True or false to enable or disable the Cell Comparison.
+                                  e.g. CellComparison=True will enable this test while CellComparison=False will disable this test.
+       - UseCellOrValue : You must specify what value to test against. You can test against another cell on the current worksheet OR against a specified value(see TestValue)
+          e.g. UseCellOrValue=Cell will indicate the logic to locate a cell in the worksheet, using the 'Cell Co-Ordinates parameters' (see below) and test against its cell contents.
+          e.g. UseCellOrValue=Value will indicate the logic to test against the Test value specified(see TestValue)
+       - Other Cell Co-Ordinates parameters; When 'UseCellOrValue=Cell', these 3 parameters below are used to locate the cell in the worksheet to be used in the CellComparison.
+         - SourceColHeading : Specify the Source column heading that will be used to find the SourceColValue in.
+         - SourceColValue : Specify the value that must be found in the SourceColHeading column.
+         - TargetColHeading : Specify the target column heading to use to locate the cell at the same line number as the SourceColValue.
+       - TestValue : When 'UseCellOrValue=Value', this test value will be used in the CellComparison.
+          e.g. TestValue=100 used in conjunction with Test=LE will test the cell contents and throw an error if the user tries to enter a value greater than 100.
+          e.g. TestValue= used in conjunction with Test=NE will test the cell contents and throw an error if the user tries to enter a blank.
+       - Comparison parameters;
+         - DataType : can be one of the following; (If not set, it will use the data type of the TargetColHeading but be careful as comparing numbers defined in character fields don't compare as expected )
+           - Numeric
+           - Character
+           - Decimal
+           - Date
+           - Logical
+         - Test : can only be one of the following; This is what you want the cell contents to be. e.g. My cell contents MUST BE 'GT' a TestValue.  e.g. My cell contents MUST BE 'NE' another cell on this worksheet.
+           - LT (LessThan)
+           - GT (GreaterThan)
+           - NE (Not Equal)
+           - EQ (Equals)
+           - GE (Greater and Equal)
+           - LE (Less and Equal)
+         
+
+    Vertical Worksheet Orientation 
+    There is a slight variation here. We need a way to define controls for multiple columns. This is done by specifying the @<Column Heading>: first.
+    - @<Column Heading>: : is used to link control rules to a specific column
+      e.g. @From Age:control=combo|values=,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21 creates a combo in the 'From Age' column (for this root column cell value).
+      e.g. @Value 1:control=combo|values=Yes,No@Value 2:control=combo|values=Yes,No create 2 combo's. One in 'Value 1' column and the other in 'Value 2' column (for this root column cell value).
+
+
+
+   Worksheet Integrity Rule Syntax
+    - NonDeleteColumns : comma separated list of column headings that will not be deleted as part of the worksheet integrity logic.
+      - e.g. NonDeleteColumns=Rate_Group, Component Description will protect these 2 columns from being deleted.
+    - NonDeleteRows : comma separated list of row numbers that will not be deleted as part of the worksheet integrity logic.
+      - e.g. NonDeleteRows=1,2,3 will protect these 3 rows from being deleted.
+    - BenefitDescRow : The row number in the scheme template that contains the benefit 'type' descriptions. This will be synchronized with the scheme worksheet. The benefit descriptions come from the component descriptions.
+      - e.g. BenefitDesc=3 will make sure row 3 of the Scheme Template worksheet is sync'd with the scheme worksheet.
+    - ColumnDescRow : The row number in the scheme template that contains the column descriptions. This will be synchronized with the scheme worksheet.
+      - e.g. ColumnDescRow=3 will make sure row 3 of the Scheme Template worksheet is sync'd with the scheme worksheet.
+
+Some examples:
+CellComparison=yes|UseCellOrValue=Value|TestValue=0|DataType=numeric|Test=NE
+
+@From Age:control=combo|values=,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21
+|CellCompCheck=SourceColHeading>Role^SourceColValue>Child 1^TargetColHeading>To Age^DataType>numeric^Test>LE
+@To Age:control=combo|values=,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21
+|CellCompCheck=SourceColHeading>Role^SourceColValue>Child 1^TargetColHeading>From Age^DataType>numeric^Test>GE
+
+LockedColumns=From Age|LockedRows=4,6|Orientation=Vertical|BoldRows=1,2|BoldColumns=1|ScreenRulesColumn=ControlRules|HiddenRows=|HiddenColumns=|LockedCells=To Age+7
+
+ValueFrom=GetComponentTypeDescrip|worksheetparameters=Component Code+CurrentRow|ParamNames=CompCode
+ComboValuesFrom=ComboFromAcronyms|parameters=sc_CmboBlank+sc_CmboYes+sc_CmboNo,Incremental+INCR|ParamNames=AcronymList,AdditionalItems
+
+
+

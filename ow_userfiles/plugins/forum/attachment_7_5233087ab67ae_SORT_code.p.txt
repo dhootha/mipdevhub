@@ -1,0 +1,375 @@
+FUNCTION funcFloor   RETURNS INTEGER (INPUT piValue AS DECIMAL) FORWARD.
+FUNCTION funcCeiling RETURNS INTEGER (INPUT piValue AS DECIMAL) FORWARD.
+
+/*============================================================================*/
+FUNCTION funcBubbleSort RETURNS CHARACTER
+  (INPUT pcList AS CHARACTER): 
+  
+  DEFINE VARIABLE cTempValue AS CHARACTER NO-UNDO. /* holding place for swap */
+  DEFINE VARIABLE i          AS INTEGER   NO-UNDO. /* outer loop counter */
+  DEFINE VARIABLE j          AS INTEGER   NO-UNDO. /* inner loop counter */
+
+  /* if 0 or 1 item in list then list is sorted */
+  IF NUM-ENTRIES(pcList) < 2 THEN
+      RETURN pcList.
+
+  DO i = NUM-ENTRIES(pcList) TO 1 BY -1:
+    DO j = 1 TO i - 1:
+      IF ENTRY(j, pcList) > ENTRY(j + 1, pcList) THEN
+      DO:
+        cTempValue           = ENTRY(j, pcList).
+        ENTRY(j, pcList)     = ENTRY(j + 1, pcList).
+        ENTRY(j + 1, pcList) = cTempValue.
+      END.
+    END.
+  END.
+
+  RETURN TRIM(pcList,",").
+
+END FUNCTION.
+
+/* ========================================================================= */
+FUNCTION funcCombSort RETURNS CHARACTER
+    (INPUT pcList AS CHARACTER):
+    
+    DEFINE VARIABLE cTempValue  AS CHARACTER NO-UNDO. /* holding place for swap */
+    DEFINE VARIABLE dShrink     AS DECIMAL   NO-UNDO. /* set the gap shrink factor */
+    DEFINE VARIABLE iNumEntries AS INTEGER   NO-UNDO. /* number of entries in list */
+    DEFINE VARIABLE iGap        AS INTEGER   NO-UNDO. /* initialize gap size */
+    DEFINE VARIABLE i           AS INTEGER   NO-UNDO. /* loop counter */
+    DEFINE VARIABLE lSwapped    AS LOGICAL   NO-UNDO. /* indicates if swap made */
+
+    /* if 0 or 1 item in list then list is sorted */
+    IF NUM-ENTRIES(pcList) < 2 THEN
+        RETURN pcList.
+
+    /* be careful with dShrink size 
+      too large and too small are both bad 
+    */
+
+    ASSIGN  
+        dShrink     = 1.3
+        iNumEntries = NUM-ENTRIES(pcList)
+        iGap        = iNumEntries
+        lSwapped    = TRUE
+    .      
+
+    DO WHILE lSwapped = TRUE OR iGap > 1 :
+        /*update the gap value for a next comb.*/
+        ASSIGN 
+            iGap = funcFloor(iGap / dShrink)
+            i = 1
+            lSwapped = FALSE.
+
+        IF iGap < 1 THEN
+            iGap = 1. /*minimum gap is 1 */
+        
+        /* a single "comb" over the input list */
+        DO WHILE (i + iGap) <= iNumEntries: 
+            IF ENTRY(i, pcList) > ENTRY((i + iGap), pcList)   THEN
+            DO:
+                ASSIGN
+                    cTempValue           = ENTRY(i, pcList)     /* swap two values */
+                    ENTRY(i, pcList)     = ENTRY((i + igap), pcList)
+                    ENTRY((i + iGap), pcList) = cTempValue
+                    lSwapped = TRUE /* Flag a swap has occurred, so the list is not guaranteed sorted */
+                .
+            END.
+            i = i + 1.
+        END.
+    END.
+
+    RETURN TRIM(pcList, ",").
+
+END FUNCTION.
+
+/* ========================================================================= */
+
+FUNCTION funcNumCombSort RETURNS CHARACTER
+    (INPUT pcList AS CHARACTER):
+    
+    DEFINE VARIABLE iTempValue  AS INTEGER   NO-UNDO. /* holding place for swap */
+    DEFINE VARIABLE dShrink     AS DECIMAL   NO-UNDO. /* set the gap shrink factor */
+    DEFINE VARIABLE iNumEntries AS INTEGER   NO-UNDO. /* number of entries in list */
+    DEFINE VARIABLE iGap        AS INTEGER   NO-UNDO. /* initialize gap size */
+    DEFINE VARIABLE i           AS INTEGER   NO-UNDO. /* loop counter */
+    DEFINE VARIABLE lSwapped    AS LOGICAL   NO-UNDO. /* indicates if swap made */
+    DEFINE VARIABLE iArray	    AS INTEGER   NO-UNDO EXTENT.
+    DEFINE VARIABLE cList       AS CHARACTER NO-UNDO.
+
+    /* if 0 or 1 item in list then list is sorted */
+    IF NUM-ENTRIES(pcList) < 2 THEN
+        RETURN pcList.
+
+    EXTENT (iArray)        = NUM-ENTRIES(pcList).
+
+    /* be careful with dShrink size 
+      too large and too small are both bad 
+    */
+
+    ASSIGN  
+        dShrink     = 1.3
+        iNumEntries = NUM-ENTRIES(pcList)
+        iGap        = iNumEntries
+        lSwapped    = TRUE.      
+    
+    /* populate array from list */
+    DO i = iNumEntries TO 1 BY -1:
+        iArray[i] = INTEGER(ENTRY(i,pcList)).
+    END.
+
+    DO WHILE lSwapped = TRUE OR iGap > 1 :
+        /*update the gap value for a next comb.*/
+        ASSIGN 
+            iGap = funcFloor(iGap / dShrink)
+            i = 1
+            lSwapped = FALSE.
+
+        IF iGap < 1 THEN
+            iGap = 1. /*minimum gap is 1 */
+        
+        /* a single "comb" over the input list - reverse order */
+        DO WHILE (i + iGap) <= iNumEntries: 
+            IF iArray[i] < iArray[i + iGap]   THEN
+            DO:
+                ASSIGN
+                    iTempValue       = iArray[i]     /* swap two values */
+                    iArray[i]        = iArray[i + iGap]
+                    iArray[i + iGap] = iTempValue
+                    lSwapped = TRUE. /* Flag a swap has occurred, so the list is not guaranteed sorted */
+            END.
+            i = i + 1.
+        END.
+    END.
+
+    iNumEntries = EXTENT(iArray).
+
+    DO i = iNumEntries TO 1 BY -1:
+        IF cList = "" THEN
+            cList = STRING(iArray[i]).
+        ELSE
+            cList = cList + "," + STRING(iArray[i]).  
+    END.
+
+    RETURN cList.
+
+END FUNCTION.
+
+
+/* ========================================================================= */
+FUNCTION funcQuickSort RETURNS CHARACTER
+    (INPUT pcList AS character):
+    DEFINE VARIABLE cListLess      AS CHARACTER NO-UNDO. /* list of items less than pivot */
+    DEFINE VARIABLE cListGreater   AS CHARACTER NO-UNDO. /* list of items less than pivot */
+    DEFINE VARIABLE cListMiddel    AS CHARACTER NO-UNDO. /* list of items equal to pivot */
+    DEFINE VARIABLE cPivot         AS CHARACTER NO-UNDO. /* pivot value - we use middel */
+    DEFINE VARIABLE iPivotPosition AS INTEGER   NO-UNDO. /* position of middel */  
+    DEFINE VARIABLE iNumEntries    AS INTEGER   NO-UNDO. /* number of entries in list */ 
+    DEFINE VARIABLE i              AS INTEGER   NO-UNDO. /* loop counter */
+
+  /* if 0 or 1 item in list then list is sorted */
+    IF NUM-ENTRIES(pcList) < 2 THEN
+        RETURN pcList.
+    
+    ASSIGN 
+        iNumEntries    = NUM-ENTRIES(pcList)
+        iPivotPosition = INTEGER (iNumEntries / 2)
+        cPivot         = ENTRY(iPivotPosition, pcList).
+
+    DO i = 1 TO iNumEntries:
+        IF ENTRY(i, pcList) < cPivot THEN
+            IF cListLess = "" THEN
+                cListless = ENTRY(i, pcList).
+            ELSE
+                cListLess = cListLess + "," + ENTRY(i, pcList).
+        IF ENTRY(i, pcList) > cPivot THEN
+            IF cListGreater = "" THEN
+                cListGreater = ENTRY(i, pcList).
+            ELSE
+                cListGreater = cListGreater + "," + ENTRY(i, pcList).
+        IF ENTRY(i, pcList) = cPivot THEN
+            IF cListMiddel = "" THEN
+                cListMiddel = ENTRY(i, pcList).
+            ELSE
+                cListMiddel = cListMiddel + "," + ENTRY(i, pcList).
+    END.
+
+    RETURN (TRIM(funcQuickSort(cListLess),",") + "," + cListMiddel + "," + TRIM(funcQuickSort(cListGreater),",")).
+END FUNCTION. /* funcQuickSort */
+
+
+/* ========================================================================== */
+FUNCTION funcFloor RETURNS INTEGER 
+    (INPUT pdValue AS DECIMAL):
+/* 
+   In mathematics and computer science, the floor and ceiling functions map a real number
+   to the largest previous or the smallest following integer, respectively. More precisely,
+   floor(x) =  is the largest integer not greater than x and 
+   ceiling(x) =  is the smallest integer not less than x.
+   For Negative numbers we do the inverse of a positive number 
+   i.e negative floor is basically a positive ceiling * -1
+*/
+
+    DEFINE VARIABLE iTempValue AS INTEGER NO-UNDO.
+    DEFINE VARIABLE dValue     AS DECIMAL NO-UNDO.
+
+    IF pdValue < 0 THEN
+        ASSIGN iTempValue = funcCeiling (pdValue * -1 ) * -1.
+    ELSE
+        ASSIGN iTempValue = TRUNCATE (pdValue, 0).
+    
+  RETURN iTempValue.
+END FUNCTION /* floor */.
+
+/* ========================================================================== */
+FUNCTION funcCeiling RETURNS INTEGER  
+    (INPUT pdValue AS DECIMAL):
+/* 
+   In mathematics and computer science, the floor and ceiling functions map a real number
+   to the largest previous or the smallest following integer, respectively. More precisely,
+   floor(x) =  is the largest integer not greater than x and 
+   ceiling(x) =  is the smallest integer not less than x.
+   For Negative numbers we do the inverse of a positive number
+   i.e negative ceiling is basically a positive floor * -1
+*/
+    DEFINE VARIABLE iTempValue AS INTEGER NO-UNDO.
+
+    IF pdValue < 0 THEN
+        ASSIGN iTempValue = funcFloor (pdValue * -1 ) * -1.
+    ELSE
+        ASSIGN iTempValue = TRUNCATE (pdValue + INTEGER(pdValue > TRUNCATE( pdValue, 0 ) ), 0 ).
+        
+  RETURN iTempValue.
+END FUNCTION /* ceiling */.
+
+/* ==============================not working yet============================================ */
+FUNCTION funcHeapify RETURNS CHARACTER
+    (INPUT pcList AS CHARACTER , INPUT piCount AS INTEGER) FORWARD.
+FUNCTION funcSiftDown RETURNS CHARACTER
+    (INPUT pcList AS CHARACTER, INPUT piStart AS INTEGER, INPUT piEnd AS INTEGER) FORWARD.
+FUNCTION funcSiftUp RETURNS CHARACTER
+    (INPUT pcList AS CHARACTER, INPUT piStart AS INTEGER, INPUT piEnd AS INTEGER) FORWARD.
+
+FUNCTION funcHeapSort RETURNS CHARACTER
+(INPUT pcList AS CHARACTER):
+
+    DEFINE VARIABLE iNumEntries AS INTEGER   NO-UNDO. /* number of entries in list */ 
+    DEFINE VARIABLE iEnd        AS INTEGER   NO-UNDO.
+    DEFINE VARIABLE iCount      AS INTEGER   NO-UNDO.
+    DEFINE VARIABLE cTempValue  AS CHARACTER NO-UNDO. /* holding place for swap */
+    DEFINE VARIABLE cList       AS CHARACTER NO-UNDO. /* Global List */
+ 
+    /* if 0 or 1 item in list then list is sorted */
+    IF NUM-ENTRIES(pcList) < 2 THEN
+        RETURN pcList.
+    
+    ASSIGN 
+        iNumEntries    = NUM-ENTRIES(pcList)
+        cList          = TRIM(pcList,",").
+
+     /*first place list in max-heap order)*/
+     ASSIGN 
+         cList = funcHeapify(cList, iNumEntries)
+         iEnd = iCount. /* in languages with one-based arrays the children are 2*i and 2*i+1 */
+     DO WHILE iEnd > 0:
+         /*swap the root(maximum value) of the heap with the last element of the heap)*/
+         ASSIGN
+             cTempValue        = ENTRY(iEnd, cList)    
+             ENTRY(iEnd, cList) = ENTRY(1, cList)
+             ENTRY(1, cList)    = cTempValue
+             iEnd = iEnd - 1 /*decrease the size of the heap by one so that the previous max value will
+                               stay in its proper placement*/
+             cList = funcSiftDown(cList, 1, iEnd) /*put the heap back in max-heap order*/
+        NO-ERROR.
+    END.
+    RETURN cList.
+END FUNCTION. /* funcHeapSort */
+
+/*create a heap*/       
+FUNCTION funcHeapify RETURNS CHARACTER
+    (INPUT pcList AS CHARACTER , INPUT piCount AS INTEGER):
+
+    DEFINE VARIABLE iEnd     AS INTEGER   NO-UNDO.
+    DEFINE VARIABLE cList    AS CHARACTER NO-UNDO.
+     /*end is assigned the index of the first (left) child of the root*/
+     ASSIGN
+         cList = TRIM(pcList,",")
+         iEnd = 1
+     NO-ERROR.
+     
+     DO WHILE iEnd < piCount:
+         /*sift up the node at index end to the proper place such that all nodes above
+          the end index are in heap order*/
+         ASSIGN
+             cList = funcSiftUp(cList, 1, iEnd)
+             iEnd = iEnd + 1.
+     /*after sifting up the last node all nodes are in heap order*/
+    END.
+END FUNCTION. /* funcHeapify */
+
+ 
+/*sifting down*/
+FUNCTION funcSiftDown RETURNS CHARACTER
+    (INPUT pcList AS CHARACTER, INPUT piStart AS INTEGER, INPUT piEnd AS INTEGER):
+     /* piEnd represents the limit of how far down the heap to sift.*/
+
+    DEFINE VARIABLE iChild      AS INTEGER   NO-UNDO.
+    DEFINE VARIABLE iRoot       AS INTEGER   NO-UNDO.
+    DEFINE VARIABLE iSwap       AS INTEGER   NO-UNDO.
+    DEFINE VARIABLE cTempValue  AS CHARACTER NO-UNDO. /* holding place for swap */
+    DEFINE VARIABLE cList       AS CHARACTER NO-UNDO.
+
+    ASSIGN 
+        iRoot = piStart
+        cList = TRIM(cList,",")
+    NO-ERROR.
+
+     DO WHILE (iRoot * 2) = piEnd:   /* While the root has at least one child */
+         ASSIGN 
+             iChild = iRoot * 2   /* root*2 points to the left child */
+             iSwap = iRoot.        /* keeps track of child to swap with */
+         /*check if root is smaller than left child*/
+         IF ENTRY(iSwap,cList) < ENTRY(iChild, cList) THEN
+             ASSIGN iSwap = iChild.
+         /*check if right child exists, and if it's bigger than what we're currently swapping with*/
+         IF (iChild + 1) = piEnd AND ENTRY(iSwap, cList) < ENTRY(iChild + 1,cList) THEN
+             iSwap = iChild + 1.
+         /*check if we need to swap at all*/
+         IF iSwap <> iRoot THEN
+             ASSIGN
+                cTempValue          = ENTRY(iRoot, cList)    
+                ENTRY(iRoot, cList) = ENTRY(iSwap, cList)
+                ENTRY(iSwap, cList) = cTempValue
+                iRoot = iSwap
+             NO-ERROR.          /*repeat to continue sifting down the child now*/
+     END.
+     RETURN cList.
+END FUNCTION. /* funcSiftDown */
+
+/*sifting up*/
+FUNCTION funcSiftUp RETURNS CHARACTER
+    (INPUT pcList AS CHARACTER, INPUT piStart AS INTEGER, INPUT piEnd AS INTEGER):
+     /* piStart represents the limit of how far up the heap to sift.
+        piEnd is the node to sift up.*/
+    DEFINE VARIABLE iChild      AS INTEGER   NO-UNDO.
+    DEFINE VARIABLE iParent     AS INTEGER   NO-UNDO.
+    DEFINE VARIABLE cList       AS CHARACTER NO-UNDO.
+    DEFINE VARIABLE cTempValue  AS CHARACTER NO-UNDO. /* holding place for swap */
+
+    ASSIGN 
+        cList = TRIM(cList,",")
+        iChild = piEnd
+    NO-ERROR. 
+
+     DO WHILE iChild > piStart:
+         ASSIGN iParent = funcFloor((iChild - 1) / 2).
+         IF ENTRY(iParent,cList) < entry(iChild,cList) THEN /*out of max-heap order*/
+             ASSIGN
+                cTempValue            = ENTRY(iParent, cList)    
+                ENTRY(iParent, cList) = ENTRY(iChild, cList)
+                ENTRY(iChild, cList)  = cTempValue
+                iChild = iParent /*repeat to continue sifting up the parent now*/
+             NO-ERROR.
+     END.
+     RETURN cList.
+END FUNCTION. /* funcSiftUp */
